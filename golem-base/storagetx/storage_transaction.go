@@ -203,7 +203,7 @@ func (tx *StorageTransaction) Run(blockNumber uint64, txHash common.Hash, txIx i
 					BlockNumber: blockNumber,
 				},
 				&types.Log{
-					Address: common.Address(address.GolemBaseStorageProcessorAddress),
+					Address: common.Address(address.ArkivProcessorAddress),
 					Topics: []common.Hash{
 						arkivlogs.ArkivEntityCreated,
 						key,
@@ -229,6 +229,7 @@ func (tx *StorageTransaction) Run(blockNumber uint64, txHash common.Hash, txIx i
 		key := crypto.Keccak256Hash(txHash.Bytes(), create.Payload, paddedI)
 
 		ap := &entity.EntityMetaData{
+			ContentType:         "application/octet-stream",
 			Owner:               sender,
 			ExpiresAtBlock:      blockNumber + create.BTL,
 			StringAnnotations:   create.StringAnnotations,
@@ -266,7 +267,7 @@ func (tx *StorageTransaction) Run(blockNumber uint64, txHash common.Hash, txIx i
 					BlockNumber: blockNumber,
 				},
 				&types.Log{
-					Address: common.Address(address.GolemBaseStorageProcessorAddress),
+					Address: common.Address(address.ArkivProcessorAddress),
 					Topics: []common.Hash{
 						arkivlogs.ArkivEntityDeleted,
 						toDelete,
@@ -315,6 +316,7 @@ func (tx *StorageTransaction) Run(blockNumber uint64, txHash common.Hash, txIx i
 		}
 
 		ap := &entity.EntityMetaData{
+			ContentType:         oldMetaData.ContentType,
 			ExpiresAtBlock:      blockNumber + update.BTL,
 			StringAnnotations:   update.StringAnnotations,
 			NumericAnnotations:  update.NumericAnnotations,
@@ -350,7 +352,7 @@ func (tx *StorageTransaction) Run(blockNumber uint64, txHash common.Hash, txIx i
 				BlockNumber: blockNumber,
 			},
 			&types.Log{
-				Address: common.Address(address.GolemBaseStorageProcessorAddress),
+				Address: common.Address(address.ArkivProcessorAddress),
 				Topics: []common.Hash{
 					arkivlogs.ArkivEntityUpdated,
 					update.EntityKey,
@@ -389,7 +391,7 @@ func (tx *StorageTransaction) Run(blockNumber uint64, txHash common.Hash, txIx i
 				BlockNumber: blockNumber,
 			},
 			&types.Log{
-				Address: common.Address(address.GolemBaseStorageProcessorAddress),
+				Address: common.Address(address.ArkivProcessorAddress),
 				Topics: []common.Hash{
 					arkivlogs.ArkivEntityBTLExtended,
 					extend.EntityKey,
